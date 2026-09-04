@@ -17,7 +17,6 @@ import { JetBrainsMono_500Medium } from "@expo-google-fonts/jetbrains-mono/500Me
 import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600SemiBold";
 import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold";
 
-
 import HomeScreen from "./src/screens/buyer/HomeScreen";
 
 export default function App() {
@@ -45,5 +44,5 @@ export default function App() {
     return null;
   }
 
-  return ( <HomeScreen />);
+  return <HomeScreen />;
 }
