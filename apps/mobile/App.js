@@ -18,6 +18,9 @@ import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600
 import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold";
 
 import AuthNavigator from "./src/navigation/AuthNavigator";
+import HomeScreen from "./src/screens/buyer/HomeScreen";
+import SearchScreen from "./src/screens/buyer/SearchScreen";
+import ProductDetailsScreen from "./src/screens/buyer/ProductDetailsScreen";
 
 export default function App() {
   const [interLoaded] = useFonts({
@@ -43,6 +46,6 @@ export default function App() {
   if (!interLoaded || !newsreaderLoaded || !jetbrainsLoaded) {
     return null;
   }
-
   return <AuthNavigator />;
-}
+  }
+
