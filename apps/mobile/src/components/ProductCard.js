@@ -4,11 +4,11 @@ const ProductCard = ({ product, onPress }) => {
   return (
     <Pressable
       onPress={onPress}
-      className="mr-4 w-44 overflow-hidden rounded-md border border-border bg-surface"
+      className="mr-4 w-48 overflow-hidden rounded-md border border-border bg-surface"
     >
       <Image
         source={product.image}
-        className="h-36 w-full"
+        className="h-40 w-full"
         resizeMode="cover"
       />
 
