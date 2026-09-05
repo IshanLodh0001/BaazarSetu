@@ -86,6 +86,9 @@ const HomeScreen = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             className="mt-4"
+            contentContainerStyle={{
+              gap: 16,
+            }}
           >
             {products.map((product) => (
               <ProductCard

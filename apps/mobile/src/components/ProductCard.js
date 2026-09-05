@@ -4,7 +4,7 @@ const ProductCard = ({ product, onPress }) => {
   return (
     <Pressable
       onPress={onPress}
-      className="mr-4 w-48 overflow-hidden rounded-md border border-border bg-surface"
+      className="w-48 overflow-hidden rounded-md border border-border bg-surface"
     >
       <Image
         source={product.image}
