@@ -17,6 +17,7 @@ import { JetBrainsMono_500Medium } from "@expo-google-fonts/jetbrains-mono/500Me
 import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600SemiBold";
 import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold";
 
+import AuthNavigator from "./src/navigation/AuthNavigator";
 import HomeScreen from "./src/screens/buyer/HomeScreen";
 import SearchScreen from "./src/screens/buyer/SearchScreen";
 import ProductDetailsScreen from "./src/screens/buyer/ProductDetailsScreen";
@@ -45,6 +46,6 @@ export default function App() {
   if (!interLoaded || !newsreaderLoaded || !jetbrainsLoaded) {
     return null;
   }
+  return <AuthNavigator />;
+  }
 
-  return <ProductDetailsScreen />;
-}
