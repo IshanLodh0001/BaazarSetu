@@ -45,7 +45,7 @@ const HomeScreen = () => {
   ];
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent />
+      <HeadComponent title={"BazaarSetu"} />
       <ScrollView
         className="flex-1 bg-background"
         contentContainerStyle={{
@@ -55,7 +55,7 @@ const HomeScreen = () => {
       >
         {/* Hero section */}
 
-        <View className="mt-6">
+        <View>
           <Text className="font-heading py-3 text-h3 text-primary">
             Find craft{"\n"}worth doing business with.
           </Text>
