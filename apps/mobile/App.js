@@ -20,6 +20,7 @@ import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold
 import HomeScreen from "./src/screens/buyer/HomeScreen";
 import SearchScreen from "./src/screens/buyer/SearchScreen";
 import ProductDetailsScreen from "./src/screens/buyer/ProductDetailsScreen";
+import CartScreen from "./src/screens/buyer/CartScreen";
 
 export default function App() {
   const [interLoaded] = useFonts({
@@ -46,5 +47,5 @@ export default function App() {
     return null;
   }
 
-  return <ProductDetailsScreen />;
+  return <CartScreen />;
 }
