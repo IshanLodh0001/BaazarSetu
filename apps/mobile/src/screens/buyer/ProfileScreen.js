@@ -47,14 +47,7 @@ export default function ProfileScreen({ navigation }) {
               </Text>
             </View>
 
-            {/* Location */}
-            <View className="mt-2 flex-row items-center">
-              <MapPin size={16} color="#806A52" />
-
-              <Text className="ml-1.5 font-sans text-body-sm text-secondary">
-                Raipur, Chhattisgarh
-              </Text>
-            </View>
+            
           </View>
         </View>
 
