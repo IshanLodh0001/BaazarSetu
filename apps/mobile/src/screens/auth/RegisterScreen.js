@@ -20,19 +20,20 @@ export default function RegisterScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const updateField = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleRegister = () => {
     console.log("Create Account pressed");
     console.log("Registration data:", formData);
   };
 
   const handleNavigateToLogin = () => {
-    if (navigation && typeof navigation.navigate === "function") {
-      navigation.navigate("Login");
-    } else if (navigation && typeof navigation.goBack === "function") {
-      navigation.goBack();
-    } else {
-      console.log("Navigate to Login");
-    }
+    navigation.navigate("Login");
   };
 
   return (
@@ -59,7 +60,6 @@ export default function RegisterScreen({ navigation }) {
 
           {/* Registration Card */}
           <View className="rounded-2.5xl border border-border bg-surface p-6">
-            {/* Heading */}
             <Text className="font-headingSemiBold text-h2 text-text">
               Create Account
             </Text>
@@ -68,7 +68,7 @@ export default function RegisterScreen({ navigation }) {
               Start your journey with BazaarSetu today.
             </Text>
 
-            {/* Full Name Input */}
+            {/* Full Name */}
             <View className="mt-5">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Full Name
@@ -90,7 +90,7 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            {/* Mobile Number Input */}
+            {/* Mobile Number */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Mobile Number
@@ -111,7 +111,7 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            {/* Password Input */}
+            {/* Password */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Password
@@ -130,8 +130,10 @@ export default function RegisterScreen({ navigation }) {
                   placeholderTextColor="#74766D"
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
+                  autoCorrect={false}
                   className="flex-1 py-3.5 font-sans text-body text-text"
                 />
+
                 <Pressable
                   onPress={() => setShowPassword((prev) => !prev)}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -146,7 +148,7 @@ export default function RegisterScreen({ navigation }) {
               </View>
             </View>
 
-            {/* Confirm Password Input */}
+            {/* Confirm Password */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Confirm Password
@@ -165,8 +167,10 @@ export default function RegisterScreen({ navigation }) {
                   placeholderTextColor="#74766D"
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
+                  autoCorrect={false}
                   className="flex-1 py-3.5 font-sans text-body text-text"
                 />
+
                 <Pressable
                   onPress={() => setShowConfirmPassword((prev) => !prev)}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -181,7 +185,7 @@ export default function RegisterScreen({ navigation }) {
               </View>
             </View>
 
-            {/* Create Account Button */}
+            {/* Create Account */}
             <Pressable
               onPress={handleRegister}
               className="mt-6 items-center justify-center rounded-xl bg-primary py-4 active:bg-primary-dark"

@@ -94,7 +94,7 @@ const SellerDashboardScreen = ({navigation}) => {
           </View>
         </View>
         <Pressable
-          // onPress={() => navigation.navigate("AddProduct")}
+          onPress={() => navigation.navigate("AddProduct")}
           className="mt-6 h-14 flex-row items-center justify-center rounded-xl bg-primary"
         >
           <Plus size={18} color="#FFFCF7" />

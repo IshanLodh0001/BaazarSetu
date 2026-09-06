@@ -10,21 +10,27 @@ import {
 } from "react-native";
 
 export default function LoginScreen({ navigation }) {
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [otp, setOtp] = useState("");
+  const [form, setForm] = useState({
+    mobileNumber: "",
+    otp: "",
+  });
+
+  const updateField = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleLogin = () => {
     console.log("Login pressed");
-    console.log("Mobile Number:", mobileNumber);
-    console.log("OTP:", otp);
+    console.log("Login data:", form);
+
+    // TODO: connect to login API
   };
 
   const handleNavigateToRegister = () => {
-    if (navigation && typeof navigation.navigate === "function") {
-      navigation.navigate("Register");
-    } else {
-      console.log("Navigate to Register");
-    }
+    navigation.navigate("Register");
   };
 
   return (
@@ -51,7 +57,6 @@ export default function LoginScreen({ navigation }) {
 
           {/* Login Card */}
           <View className="rounded-2.5xl border border-border bg-surface p-6">
-            {/* Heading */}
             <Text className="font-headingSemiBold text-h2 text-text">
               Welcome Back
             </Text>
@@ -60,15 +65,15 @@ export default function LoginScreen({ navigation }) {
               Sign in with OTP to continue to your marketplace.
             </Text>
 
-            {/* Mobile Number Input */}
+            {/* Mobile Number */}
             <View className="mt-6">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Mobile Number
               </Text>
 
               <TextInput
-                value={mobileNumber}
-                onChangeText={setMobileNumber}
+                value={form.mobileNumber}
+                onChangeText={(value) => updateField("mobileNumber", value)}
                 placeholder="Enter your mobile number"
                 placeholderTextColor="#74766D"
                 keyboardType="phone-pad"
@@ -76,15 +81,15 @@ export default function LoginScreen({ navigation }) {
               />
             </View>
 
-            {/* OTP Input */}
+            {/* OTP */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Enter OTP
               </Text>
 
               <TextInput
-                value={otp}
-                onChangeText={setOtp}
+                value={form.otp}
+                onChangeText={(value) => updateField("otp", value)}
                 placeholder="Enter 6-digit OTP"
                 placeholderTextColor="#74766D"
                 keyboardType="number-pad"
