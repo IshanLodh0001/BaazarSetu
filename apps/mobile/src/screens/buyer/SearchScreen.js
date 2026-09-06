@@ -104,7 +104,11 @@ const SearchScreen = ({ navigation }) => {
                   <ProductCard
                     product={product}
                     key={product.id}
-                    onPress={() => console.log(product.name)}
+                    onPress={() =>
+                      navigation.navigate("ProductDetails", {
+                        product,
+                      })
+                    }
                   />
                 );
               })}
@@ -126,7 +130,11 @@ const SearchScreen = ({ navigation }) => {
                     <ProductCard
                       product={product}
                       key={product.id}
-                      onPress={() => console.log(product.name)}
+                      onPress={() =>
+                        navigation.navigate("ProductDetails", {
+                          product,
+                        })
+                      }
                     />
                   );
                 })}

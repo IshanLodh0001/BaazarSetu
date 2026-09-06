@@ -44,12 +44,20 @@ const CartScreen = ({ navigation }) => {
       <HeadComponent title={"Cart"} />
       <ScrollView className="mt-6 px-4" contentContainerStyle={{ gap: 12 }}>
         {cart.map((item) => (
-          <CartItem
-            key={item.id}
-            item={item}
-            onIncrease={() => updateQuantity(item.id, 1)}
-            onDecrease={() => updateQuantity(item.id, -1)}
-          />
+          <Pressable
+            onPress={() =>
+              navigation.navigate("ProductDetails", {
+                item,
+              })
+            }
+          >
+            <CartItem
+              key={item.id}
+              item={item}
+              onIncrease={() => updateQuantity(item.id, 1)}
+              onDecrease={() => updateQuantity(item.id, -1)}
+            />
+          </Pressable>
         ))}
       </ScrollView>
 

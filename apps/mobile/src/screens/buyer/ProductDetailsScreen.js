@@ -1,8 +1,9 @@
 import { View, ScrollView, Image, Text, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import HeadComponent from "../../components/HeadComponent";
 import Navbar from "../../components/Navbar";
 
-const ProductDetailsScreen = () => {
+const ProductDetailsScreen = ({ navigation }) => {
   const product = {
     id: "1",
 
@@ -96,7 +97,7 @@ const ProductDetailsScreen = () => {
         </Pressable>
       </ScrollView>
 
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };
