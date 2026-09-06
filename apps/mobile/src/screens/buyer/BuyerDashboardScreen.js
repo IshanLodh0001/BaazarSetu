@@ -4,7 +4,7 @@ import HeaderComponent from "../../components/HeadComponent";
 import OrderCard from "../../components/OrderCart";
 import Navbar from "../../components/Navbar";
 
-const BuyerDashboardScreen = () => {
+const BuyerDashboardScreen = ({ navigation }) => {
   const orders = [
     {
       id: "BZ-1024",
@@ -74,7 +74,7 @@ const BuyerDashboardScreen = () => {
           </View>
         </View>
       </ScrollView>
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };

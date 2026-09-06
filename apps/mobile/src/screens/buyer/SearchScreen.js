@@ -5,7 +5,7 @@ import Search from "../../components/Search";
 import { useState } from "react";
 import CategoryPill from "../../components/CategoryPill";
 import ProductCard from "../../components/ProductCard";
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
   const products = [
     {
       id: "1",
@@ -135,7 +135,7 @@ const SearchScreen = () => {
           )}
         </View>
       </ScrollView>
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };

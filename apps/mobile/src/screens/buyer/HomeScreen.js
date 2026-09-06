@@ -7,7 +7,7 @@ import ProductCard from "../../components/ProductCard";
 import Navbar from "../../components/Navbar";
 import HeadComponent from "../../components/HeadComponent";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [search, setSearch] = useState("");
   const handleSearch = () => {
     console.log("Searching for:", search);
@@ -101,7 +101,7 @@ const HomeScreen = () => {
         </View>
       </ScrollView>
 
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };

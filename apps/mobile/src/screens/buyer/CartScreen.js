@@ -5,7 +5,7 @@ import HeadComponent from "../../components/HeadComponent";
 import Navbar from "../../components/Navbar";
 import CartItem from "../../components/CartItem";
 
-const CartScreen = () => {
+const CartScreen = ({ navigation }) => {
   const cartItems = [
     {
       id: "1",
@@ -73,7 +73,7 @@ const CartScreen = () => {
           <ArrowRight size={18} color="#FFFCF7" style={{ marginLeft: 8 }} />
         </Pressable>
       </View>
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };
