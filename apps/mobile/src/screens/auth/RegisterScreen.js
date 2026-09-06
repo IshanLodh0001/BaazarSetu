@@ -11,19 +11,18 @@ import {
 import { Eye, EyeOff } from "lucide-react-native";
 
 export default function RegisterScreen({ navigation }) {
-  const [fullName, setFullName] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    mobileNumber: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = () => {
     console.log("Create Account pressed");
-    console.log("Full Name:", fullName);
-    console.log("Mobile Number:", mobileNumber);
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirmPassword);
+    console.log("Registration data:", formData);
   };
 
   const handleNavigateToLogin = () => {
@@ -76,8 +75,13 @@ export default function RegisterScreen({ navigation }) {
               </Text>
 
               <TextInput
-                value={fullName}
-                onChangeText={setFullName}
+                value={formData.fullName}
+                onChangeText={(value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    fullName: value,
+                  }))
+                }
                 placeholder="Enter your full name"
                 placeholderTextColor="#74766D"
                 autoCapitalize="words"
@@ -93,8 +97,13 @@ export default function RegisterScreen({ navigation }) {
               </Text>
 
               <TextInput
-                value={mobileNumber}
-                onChangeText={setMobileNumber}
+                value={formData.mobileNumber}
+                onChangeText={(value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    mobileNumber: value,
+                  }))
+                }
                 placeholder="Enter your mobile number"
                 placeholderTextColor="#74766D"
                 keyboardType="phone-pad"
@@ -110,8 +119,13 @@ export default function RegisterScreen({ navigation }) {
 
               <View className="flex-row items-center rounded-xl border border-border bg-background px-4">
                 <TextInput
-                  value={password}
-                  onChangeText={setPassword}
+                  value={formData.password}
+                  onChangeText={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: value,
+                    }))
+                  }
                   placeholder="Create a password"
                   placeholderTextColor="#74766D"
                   secureTextEntry={!showPassword}
@@ -140,8 +154,13 @@ export default function RegisterScreen({ navigation }) {
 
               <View className="flex-row items-center rounded-xl border border-border bg-background px-4">
                 <TextInput
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
+                  value={formData.confirmPassword}
+                  onChangeText={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      confirmPassword: value,
+                    }))
+                  }
                   placeholder="Confirm your password"
                   placeholderTextColor="#74766D"
                   secureTextEntry={!showConfirmPassword}
