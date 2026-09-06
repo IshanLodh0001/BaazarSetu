@@ -1,5 +1,4 @@
-import { View, Text, TextInput, Pressable } from "react-native";
-import { Image } from "react-native";
+import { View, Text, TextInput, Pressable, Image } from "react-native";
 // import { Image, Camera } from "lucide-react-native";
 
 const AddProduct = ({ form, updateField, onAddImage, onSubmit }) => {
@@ -13,16 +12,16 @@ const AddProduct = ({ form, updateField, onAddImage, onSubmit }) => {
 
         <Pressable
           onPress={onAddImage}
-          className="mt-2 overflow-hidden rounded-xl border border-border bg-surface"
+          className="mt-2 h-48 overflow-hidden rounded-xl border border-dashed border-border bg-surface"
         >
           {form.image ? (
             <Image
               source={{ uri: form.image }}
-              className="h-52 w-full"
+              className="h-full w-full"
               resizeMode="cover"
             />
           ) : (
-            <View className="h-48 items-center justify-center">
+            <View className="flex-1 items-center justify-center">
               <Text className="font-sansSemiBold text-body-sm text-text">
                 Add a photo
               </Text>

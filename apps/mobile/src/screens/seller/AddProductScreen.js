@@ -28,6 +28,18 @@ const AddProductScreen = () => {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
 
   const [activeTab, setActiveTab] = useState("details");
+  const [aiResult, setAiResult] = useState(null);
+
+  const handleGetAssistance = () => {
+    setAiResult({
+      name: "Handcrafted Terracotta Vase",
+      description:
+        "A handcrafted terracotta vase made by traditional artisans.",
+      category: "Home Decor",
+      price: "850",
+      tags: ["Terracotta", "Handcrafted", "Home Decor"],
+    });
+  };
 
   const updateField = (field, value) => {
     setForm((prev) => ({
@@ -99,8 +111,18 @@ const AddProductScreen = () => {
     }
   };
 
-  const handleGetAssistance = () => {
-    console.log("Get AI assistance");
+  const handleUseSuggestions = () => {
+    if (!aiResult) return;
+
+    setForm((prev) => ({
+      ...prev,
+      name: aiResult.name,
+      description: aiResult.description,
+      category: aiResult.category,
+      price: aiResult.price,
+    }));
+
+    setActiveTab("details");
   };
 
   return (
@@ -162,9 +184,11 @@ const AddProductScreen = () => {
             image={form.image}
             voice={voice}
             isRecording={isRecording}
+            aiResult={aiResult}
             onAddImage={handleAddImage}
             onRecordVoice={handleRecordVoice}
             onGetAssistance={handleGetAssistance}
+            onUseSuggestions={handleUseSuggestions}
           />
         )}
       </ScrollView>
