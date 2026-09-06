@@ -1,13 +1,15 @@
-import { View, Text, Pressable, Image as RNImage } from "react-native";
-import { Image, Mic, Sparkles, Camera } from "lucide-react-native";
+import { View, Text, Pressable, Image } from "react-native";
+import { Image as ImageIcon, Mic, Sparkles, Camera } from "lucide-react-native";
 
 const AIAssistance = ({
   image,
   voice,
   isRecording,
+  aiResult,
   onAddImage,
   onRecordVoice,
   onGetAssistance,
+  onUseSuggestions,
 }) => {
   return (
     <View className="mt-8">
@@ -42,7 +44,7 @@ const AIAssistance = ({
           ) : (
             <View className="h-52 items-center justify-center">
               <View className="h-12 w-12 items-center justify-center rounded-full bg-background">
-                <Image size={22} color="#304238" />
+                <ImageIcon size={22} color="#304238" />
               </View>
 
               <Text className="mt-3 font-sansSemiBold text-body-sm text-text">
@@ -109,6 +111,78 @@ const AIAssistance = ({
           Get AI Assistance
         </Text>
       </Pressable>
+      {aiResult && (
+        <View className="mt-6 rounded-xl border border-border bg-surface p-5">
+          <Text className="font-heading text-h3 text-primary">
+            AI Suggestions
+          </Text>
+
+          <View className="mt-5">
+            <Text className="font-sansMedium text-label text-muted">
+              Product Name
+            </Text>
+            <Text className="mt-1 font-sans text-body text-text">
+              {aiResult.name}
+            </Text>
+          </View>
+
+          <View className="mt-4">
+            <Text className="font-sansMedium text-label text-muted">
+              Description
+            </Text>
+            <Text className="mt-1 font-sans text-body-sm text-text">
+              {aiResult.description}
+            </Text>
+          </View>
+
+          <View className="mt-4">
+            <Text className="font-sansMedium text-label text-muted">
+              Category
+            </Text>
+            <Text className="mt-1 font-sans text-body-sm text-text">
+              {aiResult.category}
+            </Text>
+          </View>
+
+          <View className="mt-4">
+            <Text className="font-sansMedium text-label text-muted">
+              Suggested Price
+            </Text>
+            <Text className="mt-1 font-monoMedium text-data text-primary">
+              ₹{aiResult.price}
+            </Text>
+          </View>
+
+          <View className="mt-4">
+            <Text className="font-sansMedium text-label text-muted">Tags</Text>
+
+            <View className="mt-2 flex-row flex-wrap gap-2">
+              {aiResult.tags.map((tag) => (
+                <View
+                  key={tag}
+                  className="rounded-full bg-background px-3 py-2"
+                >
+                  <Text className="font-sans text-label text-secondary">
+                    {tag}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Use Suggestions */}
+      {aiResult && (
+        <Pressable
+          onPress={onUseSuggestions}
+          className="mt-6 h-14 items-center justify-center rounded-xl bg-primary"
+        >
+          <Text className="font-sansSemiBold text-body text-surface">
+            Use Suggestions
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };
