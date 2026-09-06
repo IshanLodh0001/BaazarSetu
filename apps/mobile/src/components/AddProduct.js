@@ -1,12 +1,8 @@
 import { View, Text, TextInput, Pressable } from "react-native";
-import { Image, Camera } from "lucide-react-native";
+import { Image } from "react-native";
+// import { Image, Camera } from "lucide-react-native";
 
-const AddProduct = ({
-  form,
-  updateField,
-  onAddImage,
-  onSubmit,
-}) => {
+const AddProduct = ({ form, updateField, onAddImage, onSubmit }) => {
   return (
     <View>
       {/* Product Image */}
@@ -20,28 +16,14 @@ const AddProduct = ({
           className="mt-2 overflow-hidden rounded-xl border border-border bg-surface"
         >
           {form.image ? (
-            <View className="relative">
-              <Image
-                source={form.image}
-                className="h-52 w-full"
-                resizeMode="cover"
-              />
-
-              <View className="absolute bottom-3 right-3 flex-row items-center rounded-lg bg-surface px-3 py-2">
-                <Camera size={16} color="#304238" />
-
-                <Text className="ml-2 font-sansMedium text-label text-primary">
-                  Change Image
-                </Text>
-              </View>
-            </View>
+            <Image
+              source={{ uri: form.image }}
+              className="h-52 w-full"
+              resizeMode="cover"
+            />
           ) : (
             <View className="h-48 items-center justify-center">
-              <View className="h-12 w-12 items-center justify-center rounded-full bg-background">
-                <Image size={22} color="#304238" />
-              </View>
-
-              <Text className="mt-3 font-sansSemiBold text-body-sm text-text">
+              <Text className="font-sansSemiBold text-body-sm text-text">
                 Add a photo
               </Text>
 
@@ -87,9 +69,7 @@ const AddProduct = ({
 
       {/* Category */}
       <View className="mt-5">
-        <Text className="font-sansMedium text-body-sm text-text">
-          Category
-        </Text>
+        <Text className="font-sansMedium text-body-sm text-text">Category</Text>
 
         <TextInput
           value={form.category}
@@ -103,9 +83,7 @@ const AddProduct = ({
       {/* Price + Stock */}
       <View className="mt-5 flex-row gap-3">
         <View className="flex-1">
-          <Text className="font-sansMedium text-body-sm text-text">
-            Price
-          </Text>
+          <Text className="font-sansMedium text-body-sm text-text">Price</Text>
 
           <TextInput
             value={form.price}
@@ -118,9 +96,7 @@ const AddProduct = ({
         </View>
 
         <View className="flex-1">
-          <Text className="font-sansMedium text-body-sm text-text">
-            Stock
-          </Text>
+          <Text className="font-sansMedium text-body-sm text-text">Stock</Text>
 
           <TextInput
             value={form.stock}
@@ -135,9 +111,7 @@ const AddProduct = ({
 
       {/* Location */}
       <View className="mt-5">
-        <Text className="font-sansMedium text-body-sm text-text">
-          Location
-        </Text>
+        <Text className="font-sansMedium text-body-sm text-text">Location</Text>
 
         <TextInput
           value={form.location}
