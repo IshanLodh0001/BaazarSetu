@@ -39,49 +39,50 @@ export default function ProfileScreen({ navigation }) {
 
             <View className="ml-4 flex-1">
               <Text className="font-headingSemiBold text-h2 text-text">
-                Shubham Sharma
+                {" "}
               </Text>
 
               <Text className="mt-1 font-sans text-body-sm text-muted">
-                +91 XXXXX XXXXX
+                {" "}
               </Text>
+            </View>
 
-              {/* Location */}
-              <View className="mt-2 flex-row items-center">
-                <MapPin size={16} color="#806A52" />
+            {/* Location */}
+            <View className="mt-2 flex-row items-center">
+              <MapPin size={16} color="#806A52" />
 
-                <Text className="ml-1.5 font-sans text-body-sm text-secondary">
-                  Raipur, Chhattisgarh
-                </Text>
-              </View>
+              <Text className="ml-1.5 font-sans text-body-sm text-secondary">
+                Raipur, Chhattisgarh
+              </Text>
             </View>
           </View>
-
-          {/* Edit Profile */}
-          <Pressable
-            onPress={handleEditProfile}
-            className="mt-5 flex-row items-center justify-center rounded-xl bg-primary py-3 active:bg-primary-dark"
-          >
-            <Pencil size={16} color="#FFFCF7" />
-
-            <Text className="ml-2 font-sansSemiBold text-body-sm text-surface">
-              Edit Profile
-            </Text>
-          </Pressable>
         </View>
 
-        {/* Logout */}
+        {/* Edit Profile */}
         <Pressable
-          onPress={handleLogout}
-          className="flex-row items-center justify-center rounded-2.5xl border border-border bg-surface p-4 active:bg-background/50"
+          onPress={handleEditProfile}
+          className="mt-5 flex-row items-center justify-center rounded-xl bg-primary py-3 active:bg-primary-dark"
         >
-          <LogOut size={20} color="#B65345" />
+          <Pencil size={16} color="#FFFCF7" />
 
-          <Text className="ml-2 font-sansSemiBold text-body text-error">
-            Logout
+          <Text className="ml-2 font-sansSemiBold text-body-sm text-surface">
+            Edit Profile
           </Text>
         </Pressable>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+
+      {/* Logout */}
+      <Pressable
+        onPress={handleLogout}
+        className="flex-row items-center justify-center rounded-2.5xl border border-border bg-surface p-4 active:bg-background/50"
+      >
+        <LogOut size={20} color="#B65345" />
+
+        <Text className="ml-2 font-sansSemiBold text-body text-error">
+          Logout
+        </Text>
+      </Pressable>
+    </ScrollView>
+    </SafeAreaView >
   );
 }
