@@ -11,29 +11,32 @@ import {
 import { Eye, EyeOff } from "lucide-react-native";
 
 export default function RegisterScreen({ navigation }) {
-  const [fullName, setFullName] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [form, setForm] = useState({
+    fullName: "",
+    mobileNumber: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const updateField = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const handleRegister = () => {
     console.log("Create Account pressed");
-    console.log("Full Name:", fullName);
-    console.log("Mobile Number:", mobileNumber);
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirmPassword);
+    console.log("Registration data:", form);
+
+    // TODO: connect to registration API
   };
 
   const handleNavigateToLogin = () => {
-    if (navigation && typeof navigation.navigate === "function") {
-      navigation.navigate("Login");
-    } else if (navigation && typeof navigation.goBack === "function") {
-      navigation.goBack();
-    } else {
-      console.log("Navigate to Login");
-    }
+    navigation.navigate("Login");
   };
 
   return (
@@ -60,7 +63,6 @@ export default function RegisterScreen({ navigation }) {
 
           {/* Registration Card */}
           <View className="rounded-2.5xl border border-border bg-surface p-6">
-            {/* Heading */}
             <Text className="font-headingSemiBold text-h2 text-text">
               Create Account
             </Text>
@@ -69,15 +71,15 @@ export default function RegisterScreen({ navigation }) {
               Start your journey with BazaarSetu today.
             </Text>
 
-            {/* Full Name Input */}
+            {/* Full Name */}
             <View className="mt-5">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Full Name
               </Text>
 
               <TextInput
-                value={fullName}
-                onChangeText={setFullName}
+                value={form.fullName}
+                onChangeText={(value) => updateField("fullName", value)}
                 placeholder="Enter your full name"
                 placeholderTextColor="#74766D"
                 autoCapitalize="words"
@@ -86,15 +88,15 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            {/* Mobile Number Input */}
+            {/* Mobile Number */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Mobile Number
               </Text>
 
               <TextInput
-                value={mobileNumber}
-                onChangeText={setMobileNumber}
+                value={form.mobileNumber}
+                onChangeText={(value) => updateField("mobileNumber", value)}
                 placeholder="Enter your mobile number"
                 placeholderTextColor="#74766D"
                 keyboardType="phone-pad"
@@ -102,7 +104,7 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
-            {/* Password Input */}
+            {/* Password */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Password
@@ -110,14 +112,16 @@ export default function RegisterScreen({ navigation }) {
 
               <View className="flex-row items-center rounded-xl border border-border bg-background px-4">
                 <TextInput
-                  value={password}
-                  onChangeText={setPassword}
+                  value={form.password}
+                  onChangeText={(value) => updateField("password", value)}
                   placeholder="Create a password"
                   placeholderTextColor="#74766D"
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
+                  autoCorrect={false}
                   className="flex-1 py-3.5 font-sans text-body text-text"
                 />
+
                 <Pressable
                   onPress={() => setShowPassword((prev) => !prev)}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -132,7 +136,7 @@ export default function RegisterScreen({ navigation }) {
               </View>
             </View>
 
-            {/* Confirm Password Input */}
+            {/* Confirm Password */}
             <View className="mt-4">
               <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
                 Confirm Password
@@ -140,14 +144,18 @@ export default function RegisterScreen({ navigation }) {
 
               <View className="flex-row items-center rounded-xl border border-border bg-background px-4">
                 <TextInput
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
+                  value={form.confirmPassword}
+                  onChangeText={(value) =>
+                    updateField("confirmPassword", value)
+                  }
                   placeholder="Confirm your password"
                   placeholderTextColor="#74766D"
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
+                  autoCorrect={false}
                   className="flex-1 py-3.5 font-sans text-body text-text"
                 />
+
                 <Pressable
                   onPress={() => setShowConfirmPassword((prev) => !prev)}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -162,7 +170,7 @@ export default function RegisterScreen({ navigation }) {
               </View>
             </View>
 
-            {/* Create Account Button */}
+            {/* Create Account */}
             <Pressable
               onPress={handleRegister}
               className="mt-6 items-center justify-center rounded-xl bg-primary py-4 active:bg-primary-dark"

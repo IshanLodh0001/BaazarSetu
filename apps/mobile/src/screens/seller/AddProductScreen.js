@@ -26,7 +26,6 @@ const AddProductScreen = ({navigation}) => {
   const [voice, setVoice] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
-  const navigation = useNavigation();
 
   const [activeTab, setActiveTab] = useState("details");
   const [aiResult, setAiResult] = useState(null);
