@@ -21,6 +21,9 @@ import HomeScreen from "./src/screens/buyer/HomeScreen";
 import SearchScreen from "./src/screens/buyer/SearchScreen";
 import ProductDetailsScreen from "./src/screens/buyer/ProductDetailsScreen";
 import CartScreen from "./src/screens/buyer/CartScreen";
+import LoginScreen from "./src/screens/auth/LoginScreen"
+import RegisterScreen from "./src/screens/auth/RegisterScreen"
+import BuyerDashboardScreen from "./src/screens/buyer/BuyerDashboardScreen";
 
 export default function App() {
   const [interLoaded] = useFonts({
@@ -47,5 +50,5 @@ export default function App() {
     return null;
   }
 
-  return <CartScreen />;
+  return <HomeScreen />;
 }
