@@ -10,23 +10,48 @@ import {
 } from "react-native";
 
 export default function LoginScreen({ navigation }) {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     mobileNumber: "",
     otp: "",
   });
 
+  const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState("");
+
   const updateField = (field, value) => {
-    setForm((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    setError("");
+  };
+
+  const handleSendOTP = () => {
+    const mobileNumber = formData.mobileNumber;
+
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    console.log("Sending OTP to:", mobileNumber);
+
+    // TODO: connect to send OTP API
+    setOtpSent(true);
   };
 
   const handleLogin = () => {
-    console.log("Login pressed");
-    console.log("Login data:", form);
+    if (!/^\d{6}$/.test(formData.otp)) {
+      setError("Please enter a valid 6-digit OTP.");
+      return;
+    }
 
-    // TODO: connect to login API
+    console.log("Verifying OTP");
+    console.log("Mobile Number:", formData.mobileNumber);
+    console.log("OTP:", formData.otp);
+
+    // TODO: connect to OTP verification API
   };
 
   const handleNavigateToRegister = () => {
@@ -62,7 +87,7 @@ export default function LoginScreen({ navigation }) {
             </Text>
 
             <Text className="mt-1 font-sans text-body-sm text-muted">
-              Sign in with OTP to continue to your marketplace.
+              Sign in with your mobile number and OTP.
             </Text>
 
             {/* Mobile Number */}
@@ -72,41 +97,121 @@ export default function LoginScreen({ navigation }) {
               </Text>
 
               <TextInput
-                value={form.mobileNumber}
-                onChangeText={(value) => updateField("mobileNumber", value)}
-                placeholder="Enter your mobile number"
-                placeholderTextColor="#74766D"
-                keyboardType="phone-pad"
-                className="rounded-xl border border-border bg-background px-4 py-3.5 font-sans text-body text-text"
-              />
-            </View>
-
-            {/* OTP */}
-            <View className="mt-4">
-              <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
-                Enter OTP
-              </Text>
-
-              <TextInput
-                value={form.otp}
-                onChangeText={(value) => updateField("otp", value)}
-                placeholder="Enter 6-digit OTP"
+                value={formData.mobileNumber}
+                onChangeText={(value) =>
+                  updateField(
+                    "mobileNumber",
+                    value.replace(/\D/g, "").slice(0, 10),
+                  )
+                }
+                placeholder="Enter your 10-digit mobile number"
                 placeholderTextColor="#74766D"
                 keyboardType="number-pad"
-                maxLength={6}
+                maxLength={10}
+                autoCorrect={false}
+                editable={!otpSent}
                 className="rounded-xl border border-border bg-background px-4 py-3.5 font-sans text-body text-text"
               />
             </View>
 
-            {/* Login Button */}
-            <Pressable
-              onPress={handleLogin}
-              className="mt-6 items-center justify-center rounded-xl bg-primary py-4 active:bg-primary-dark"
-            >
-              <Text className="font-sansBold text-body text-surface">
-                Login
+            {/* Send OTP */}
+            {!otpSent ? (
+              <Pressable
+                onPress={handleSendOTP}
+                disabled={formData.mobileNumber.length !== 10}
+                className={`mt-4 items-center justify-center rounded-xl py-4 ${
+                  formData.mobileNumber.length === 10
+                    ? "bg-primary active:bg-primary-dark"
+                    : "bg-border"
+                }`}
+              >
+                <Text
+                  className={`font-sansBold text-body ${
+                    formData.mobileNumber.length === 10
+                      ? "text-surface"
+                      : "text-muted"
+                  }`}
+                >
+                  Send OTP
+                </Text>
+              </Pressable>
+            ) : (
+              <>
+                {/* OTP */}
+                <View className="mt-4">
+                  <View className="mb-2 flex-row items-center justify-between">
+                    <Text className="font-sansSemiBold text-body-sm text-text">
+                      Enter OTP
+                    </Text>
+
+                    <Pressable
+                      onPress={handleSendOTP}
+                      hitSlop={{
+                        top: 8,
+                        bottom: 8,
+                        left: 8,
+                        right: 8,
+                      }}
+                    >
+                      <Text className="font-sansSemiBold text-body-sm text-accent">
+                        Resend OTP
+                      </Text>
+                    </Pressable>
+                  </View>
+
+                  <TextInput
+                    value={formData.otp}
+                    onChangeText={(value) =>
+                      updateField(
+                        "otp",
+                        value.replace(/\D/g, "").slice(0, 6),
+                      )
+                    }
+                    placeholder="Enter 6-digit OTP"
+                    placeholderTextColor="#74766D"
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    autoFocus
+                    className="rounded-xl border border-border bg-background px-4 py-3.5 font-sans text-body text-text"
+                  />
+                </View>
+
+                {/* Error */}
+                {error ? (
+                  <Text className="mt-3 font-sans text-body-sm text-error">
+                    {error}
+                  </Text>
+                ) : null}
+
+                {/* Verify & Login */}
+                <Pressable
+                  onPress={handleLogin}
+                  disabled={formData.otp.length !== 6}
+                  className={`mt-6 items-center justify-center rounded-xl py-4 ${
+                    formData.otp.length === 6
+                      ? "bg-primary active:bg-primary-dark"
+                      : "bg-border"
+                  }`}
+                >
+                  <Text
+                    className={`font-sansBold text-body ${
+                      formData.otp.length === 6
+                        ? "text-surface"
+                        : "text-muted"
+                    }`}
+                  >
+                    Verify & Login
+                  </Text>
+                </Pressable>
+              </>
+            )}
+
+            {/* Error before OTP */}
+            {!otpSent && error ? (
+              <Text className="mt-3 font-sans text-body-sm text-error">
+                {error}
               </Text>
-            </Pressable>
+            ) : null}
           </View>
 
           {/* Register Link */}
