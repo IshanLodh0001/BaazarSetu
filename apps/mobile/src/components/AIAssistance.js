@@ -3,6 +3,8 @@ import { Image, Mic, Sparkles, Camera } from "lucide-react-native";
 
 const AIAssistance = ({
   image,
+  voice,
+  isRecording,
   onAddImage,
   onRecordVoice,
   onGetAssistance,
@@ -11,9 +13,7 @@ const AIAssistance = ({
     <View className="mt-8">
       {/* Intro */}
       <View>
-        <Text className="font-heading text-h2 text-primary">
-          AI Assistance
-        </Text>
+        <Text className="font-heading text-h2 text-primary">AI Assistance</Text>
 
         <Text className="mt-1 font-sans text-body-sm text-secondary">
           Show us your product and describe it in your own words. We'll help
@@ -33,19 +33,11 @@ const AIAssistance = ({
         >
           {image ? (
             <View className="relative">
-              <RNImage
-                source={image}
+              <Image
+                source={{ uri: image }}
                 className="h-52 w-full"
                 resizeMode="cover"
               />
-
-              <View className="absolute bottom-3 right-3 flex-row items-center rounded-lg bg-surface px-3 py-2">
-                <Camera size={16} color="#304238" />
-
-                <Text className="ml-2 font-sansMedium text-label text-primary">
-                  Change Image
-                </Text>
-              </View>
             </View>
           ) : (
             <View className="h-52 items-center justify-center">
@@ -86,12 +78,23 @@ const AIAssistance = ({
 
           <Pressable
             onPress={onRecordVoice}
-            className="mt-5 h-12 w-full items-center justify-center rounded-xl border border-border"
+            className={`mt-5 h-12 w-full items-center justify-center rounded-xl ${
+              isRecording ? "bg-accent" : "border border-border"
+            }`}
           >
-            <Text className="font-sansSemiBold text-body-sm text-primary">
-              Record Voice
+            <Text
+              className={`font-sansSemiBold text-body-sm ${
+                isRecording ? "text-surface" : "text-primary"
+              }`}
+            >
+              {isRecording ? "Stop Recording" : "Record Voice"}
             </Text>
           </Pressable>
+          {voice && !isRecording && (
+            <Text className="mt-3 text-center font-sans text-label text-success">
+              Voice description recorded
+            </Text>
+          )}
         </View>
       </View>
 
