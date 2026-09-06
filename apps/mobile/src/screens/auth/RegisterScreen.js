@@ -8,28 +8,84 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Eye, EyeOff } from "lucide-react-native";
 
 export default function RegisterScreen({ navigation }) {
   const [formData, setFormData] = useState({
     fullName: "",
     mobileNumber: "",
-    password: "",
-    confirmPassword: "",
+    otp: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState("");
 
   const updateField = (field, value) => {
-    setForm((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    setError("");
+  };
+
+  const handleSendOTP = () => {
+    const fullName = formData.fullName.trim();
+    const mobileNumber = formData.mobileNumber;
+
+    if (!fullName) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(fullName)) {
+      setError("Name can only contain alphabets and spaces.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    console.log("Sending registration OTP to:", mobileNumber);
+
+    // TODO: connect to send OTP API
+    setOtpSent(true);
   };
 
   const handleRegister = () => {
+    const fullName = formData.fullName.trim();
+    const mobileNumber = formData.mobileNumber;
+    const otp = formData.otp;
+
+    if (!fullName) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(fullName)) {
+      setError("Name can only contain alphabets and spaces.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(mobileNumber)) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
     console.log("Create Account pressed");
-    console.log("Registration data:", formData);
+    console.log("Registration data:", {
+      fullName,
+      mobileNumber,
+      otp,
+    });
+
+    // TODO: connect to registration API
   };
 
   const handleNavigateToLogin = () => {
@@ -65,7 +121,7 @@ export default function RegisterScreen({ navigation }) {
             </Text>
 
             <Text className="mt-1 font-sans text-body-sm text-muted">
-              Start your journey with BazaarSetu today.
+              Create your BazaarSetu account using your mobile number.
             </Text>
 
             {/* Full Name */}
@@ -77,10 +133,7 @@ export default function RegisterScreen({ navigation }) {
               <TextInput
                 value={formData.fullName}
                 onChangeText={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    fullName: value,
-                  }))
+                  updateField("fullName", value.replace(/[^A-Za-z ]/g, ""))
                 }
                 placeholder="Enter your full name"
                 placeholderTextColor="#74766D"
@@ -99,101 +152,119 @@ export default function RegisterScreen({ navigation }) {
               <TextInput
                 value={formData.mobileNumber}
                 onChangeText={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    mobileNumber: value,
-                  }))
+                  updateField(
+                    "mobileNumber",
+                    value.replace(/\D/g, "").slice(0, 10),
+                  )
                 }
-                placeholder="Enter your mobile number"
+                placeholder="Enter your 10-digit mobile number"
                 placeholderTextColor="#74766D"
-                keyboardType="phone-pad"
+                keyboardType="number-pad"
+                maxLength={10}
+                autoCorrect={false}
+                editable={!otpSent}
                 className="rounded-xl border border-border bg-background px-4 py-3.5 font-sans text-body text-text"
               />
             </View>
 
-            {/* Password */}
-            <View className="mt-4">
-              <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
-                Password
-              </Text>
-
-              <View className="flex-row items-center rounded-xl border border-border bg-background px-4">
-                <TextInput
-                  value={formData.password}
-                  onChangeText={(value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      password: value,
-                    }))
-                  }
-                  placeholder="Create a password"
-                  placeholderTextColor="#74766D"
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  className="flex-1 py-3.5 font-sans text-body text-text"
-                />
-
-                <Pressable
-                  onPress={() => setShowPassword((prev) => !prev)}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  className="pl-2"
+            {/* Send OTP */}
+            {!otpSent ? (
+              <Pressable
+                onPress={handleSendOTP}
+                disabled={
+                  formData.fullName.trim().length === 0 ||
+                  formData.mobileNumber.length !== 10
+                }
+                className={`mt-4 items-center justify-center rounded-xl py-4 ${
+                  formData.fullName.trim().length > 0 &&
+                  formData.mobileNumber.length === 10
+                    ? "bg-primary active:bg-primary-dark"
+                    : "bg-border"
+                }`}
+              >
+                <Text
+                  className={`font-sansBold text-body ${
+                    formData.fullName.trim().length > 0 &&
+                    formData.mobileNumber.length === 10
+                      ? "text-surface"
+                      : "text-muted"
+                  }`}
                 >
-                  {showPassword ? (
-                    <EyeOff size={20} color="#74766D" />
-                  ) : (
-                    <Eye size={20} color="#74766D" />
-                  )}
-                </Pressable>
-              </View>
-            </View>
+                  Send OTP
+                </Text>
+              </Pressable>
+            ) : (
+              <>
+                {/* OTP */}
+                <View className="mt-4">
+                  <View className="mb-2 flex-row items-center justify-between">
+                    <Text className="font-sansSemiBold text-body-sm text-text">
+                      Enter OTP
+                    </Text>
 
-            {/* Confirm Password */}
-            <View className="mt-4">
-              <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
-                Confirm Password
-              </Text>
+                    <Pressable
+                      onPress={handleSendOTP}
+                      hitSlop={{
+                        top: 8,
+                        bottom: 8,
+                        left: 8,
+                        right: 8,
+                      }}
+                    >
+                      <Text className="font-sansSemiBold text-body-sm text-accent">
+                        Resend OTP
+                      </Text>
+                    </Pressable>
+                  </View>
 
-              <View className="flex-row items-center rounded-xl border border-border bg-background px-4">
-                <TextInput
-                  value={formData.confirmPassword}
-                  onChangeText={(value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      confirmPassword: value,
-                    }))
-                  }
-                  placeholder="Confirm your password"
-                  placeholderTextColor="#74766D"
-                  secureTextEntry={!showConfirmPassword}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  className="flex-1 py-3.5 font-sans text-body text-text"
-                />
+                  <TextInput
+                    value={formData.otp}
+                    onChangeText={(value) =>
+                      updateField("otp", value.replace(/\D/g, "").slice(0, 6))
+                    }
+                    placeholder="Enter 6-digit OTP"
+                    placeholderTextColor="#74766D"
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    autoFocus
+                    className="rounded-xl border border-border bg-background px-4 py-3.5 font-sans text-body text-text"
+                  />
+                </View>
 
+                {/* Error */}
+                {error ? (
+                  <Text className="mt-3 font-sans text-body-sm text-error">
+                    {error}
+                  </Text>
+                ) : null}
+
+                {/* Create Account */}
                 <Pressable
-                  onPress={() => setShowConfirmPassword((prev) => !prev)}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  className="pl-2"
+                  onPress={handleRegister}
+                  disabled={formData.otp.length !== 6}
+                  className={`mt-6 items-center justify-center rounded-xl py-4 ${
+                    formData.otp.length === 6
+                      ? "bg-primary active:bg-primary-dark"
+                      : "bg-border"
+                  }`}
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff size={20} color="#74766D" />
-                  ) : (
-                    <Eye size={20} color="#74766D" />
-                  )}
+                  <Text
+                    className={`font-sansBold text-body ${
+                      formData.otp.length === 6 ? "text-surface" : "text-muted"
+                    }`}
+                  >
+                    Create Account
+                  </Text>
                 </Pressable>
-              </View>
-            </View>
+              </>
+            )}
 
-            {/* Create Account */}
-            <Pressable
-              onPress={handleRegister}
-              className="mt-6 items-center justify-center rounded-xl bg-primary py-4 active:bg-primary-dark"
-            >
-              <Text className="font-sansBold text-body text-surface">
-                Create Account
+            {/* Error before OTP */}
+            {!otpSent && error ? (
+              <Text className="mt-3 font-sans text-body-sm text-error">
+                {error}
               </Text>
-            </Pressable>
+            ) : null}
           </View>
 
           {/* Login Link */}

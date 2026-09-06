@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator();
 export default function RootNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="Buyer"
+      // initialRouteName=""
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="Auth" component={AuthNavigator} />
