@@ -1,4 +1,5 @@
 import "./global.css";
+import { NavigationContainer } from "@react-navigation/native";
 
 import { useFonts } from "@expo-google-fonts/inter/useFonts";
 import { Inter_400Regular } from "@expo-google-fonts/inter/400Regular";
@@ -17,13 +18,7 @@ import { JetBrainsMono_500Medium } from "@expo-google-fonts/jetbrains-mono/500Me
 import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600SemiBold";
 import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold";
 
-import HomeScreen from "./src/screens/buyer/HomeScreen";
-import SearchScreen from "./src/screens/buyer/SearchScreen";
-import ProductDetailsScreen from "./src/screens/buyer/ProductDetailsScreen";
-import CartScreen from "./src/screens/buyer/CartScreen";
-import LoginScreen from "./src/screens/auth/LoginScreen"
-import RegisterScreen from "./src/screens/auth/RegisterScreen"
-import BuyerDashboardScreen from "./src/screens/buyer/BuyerDashboardScreen";
+import BuyerNavigator from "./src/navigation/BuyerNavigator";
 
 export default function App() {
   const [interLoaded] = useFonts({
@@ -50,5 +45,9 @@ export default function App() {
     return null;
   }
 
-  return <HomeScreen />;
+  return (
+    <NavigationContainer>
+      <BuyerNavigator />
+    </NavigationContainer>
+  );
 }
