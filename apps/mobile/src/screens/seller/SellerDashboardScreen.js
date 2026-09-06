@@ -1,11 +1,10 @@
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { Plus } from "lucide-react-native";
-
 import HeaderCompoent from "../../components/HeadComponent";
 import SellerOrderCard from "../../components/SellerOrderCard";
 import Navbar from "../../components/Navbar";
 
-const SellerDashboardScreen = () => {
+const SellerDashboardScreen = ({navigation}) => {
   const recentOrders = [
     {
       id: "BZ-1024",
@@ -104,7 +103,7 @@ const SellerDashboardScreen = () => {
           </Text>
         </Pressable>
       </ScrollView>
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };

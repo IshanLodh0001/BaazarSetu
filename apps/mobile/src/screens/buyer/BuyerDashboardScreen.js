@@ -68,7 +68,11 @@ const BuyerDashboardScreen = ({ navigation }) => {
               <OrderCard
                 key={order.id}
                 order={order}
-                onPress={() => console.log(order.id)}
+                onPress={() =>
+                  navigation.navigate("ProductDetails", {
+                    order,
+                  })
+                }
               />
             ))}
           </View>

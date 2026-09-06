@@ -69,7 +69,7 @@ const HomeScreen = ({ navigation }) => {
         />
 
         {/* Featured component */}
-        <FeaturedProduct />
+        <FeaturedProduct product={products} />
 
         {/* Meet The Maker Section */}
 
@@ -94,7 +94,11 @@ const HomeScreen = ({ navigation }) => {
               <ProductCard
                 key={product.id}
                 product={product}
-                onPress={() => console.log(product.name)}
+                onPress={() =>
+                  navigation.navigate("ProductDetails", {
+                    product,
+                  })
+                }
               />
             ))}
           </ScrollView>

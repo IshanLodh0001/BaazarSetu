@@ -19,7 +19,7 @@ import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600
 import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold";
 
 import BuyerNavigator from "./src/navigation/BuyerNavigator";
-import AddProductScreen from "./src/screens/seller/AddProductScreen";
+// import AddProductScreen from "./src/screens/seller/AddProductScreen";
 
 export default function App() {
   const [interLoaded] = useFonts({
@@ -47,9 +47,8 @@ export default function App() {
   }
 
   return (
-    // <NavigationContainer>
-    //   <BuyerNavigator />
-    // </NavigationContainer>
-    <AddProductScreen />
+    <NavigationContainer>
+      <BuyerNavigator />
+    </NavigationContainer>
   );
 }

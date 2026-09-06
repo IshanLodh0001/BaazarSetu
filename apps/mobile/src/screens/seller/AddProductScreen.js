@@ -12,7 +12,7 @@ import AIAssistance from "../../components/AIAssistance";
 import Navbar from "../../components/Navbar";
 import AddProduct from "../../components/AddProduct";
 
-const AddProductScreen = () => {
+const AddProductScreen = ({navigation}) => {
   const [form, setForm] = useState({
     image: null,
     name: "",
@@ -26,6 +26,7 @@ const AddProductScreen = () => {
   const [voice, setVoice] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+  const navigation = useNavigation();
 
   const [activeTab, setActiveTab] = useState("details");
   const [aiResult, setAiResult] = useState(null);
@@ -193,7 +194,7 @@ const AddProductScreen = () => {
         )}
       </ScrollView>
 
-      <Navbar />
+      <Navbar navigation={navigation} />
     </View>
   );
 };
