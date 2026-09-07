@@ -1,15 +1,17 @@
 import Redis from "ioredis";
 
+const redisUrl = process.env.REDIS_URL;
+
 console.log(
-  "REDIS_URL configured:",
-  Boolean(process.env.REDIS_URL),
-  "host:",
-  process.env.REDIS_URL
-    ? new URL(process.env.REDIS_URL).hostname
+  "REDIS_URL:",
+  redisUrl
+    ? `configured (${new URL(redisUrl).hostname})`
     : "MISSING",
 );
 
-const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+if (!redisUrl) {
+  throw new Error("REDIS_URL is not configured");
+}
 
 export const redisClient = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
