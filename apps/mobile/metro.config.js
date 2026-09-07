@@ -3,6 +3,8 @@ const { withNativeWind } = require("nativewind/metro");
 
 const config = getDefaultConfig(__dirname);
 
+config.watchFolders = [__dirname, require("path").resolve(__dirname, "../..")];
+
 module.exports = withNativeWind(config, {
   input: "./global.css",
 });
