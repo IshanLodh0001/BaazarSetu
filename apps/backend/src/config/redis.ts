@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import Redis from "ioredis";
 
 console.log(
   "REDIS_URL configured:",
@@ -9,16 +9,16 @@ console.log(
     : "MISSING",
 );
 
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
 
 export const redisClient = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
 });
 
-redisClient.on('connect', () => {
-  console.log('Redis connected successfully');
+redisClient.on("connect", () => {
+  console.log("Redis connected successfully");
 });
 
-redisClient.on('error', (err) => {
-  console.error('Redis connection error:', err);
+redisClient.on("error", (err) => {
+  console.error("Redis connection error:", err);
 });
