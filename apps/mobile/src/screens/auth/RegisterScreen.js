@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,11 +10,15 @@ import {
   View,
 } from "react-native";
 
+import { sendOTP, verifyOTP } from "../../services/api";
+
 export default function RegisterScreen({ navigation }) {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     mobileNumber: "",
     otp: "",
+    role: "",
   });
 
   const [otpSent, setOtpSent] = useState(false);
@@ -28,7 +33,7 @@ export default function RegisterScreen({ navigation }) {
     setError("");
   };
 
-  const handleSendOTP = () => {
+  const handleSendOTP = async () => {
     const fullName = formData.fullName.trim();
     const mobileNumber = formData.mobileNumber;
 
@@ -47,13 +52,25 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
-    console.log("Sending registration OTP to:", mobileNumber);
+    if (!formData.role) {
+      setError("Please select whether you want to buy or sell.");
+      return;
+    }
 
-    // TODO: connect to send OTP API
-    setOtpSent(true);
+    try {
+      setError("");
+
+      const result = await sendOTP(`+91${mobileNumber}`);
+
+      console.log("OTP response:", result);
+
+      setOtpSent(true);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const fullName = formData.fullName.trim();
     const mobileNumber = formData.mobileNumber;
     const otp = formData.otp;
@@ -73,24 +90,41 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
+    if (!formData.role) {
+      setError("Please select whether you want to buy or sell.");
+      return;
+    }
+
     if (!/^\d{6}$/.test(otp)) {
       setError("Please enter a valid 6-digit OTP.");
       return;
     }
 
-    console.log("Create Account pressed");
-    console.log("Registration data:", {
-      fullName,
-      mobileNumber,
-      otp,
-    });
+    try {
+      setError("");
 
-    // TODO: connect to registration API
+      const result = await verifyOTP({
+        phone: `+91${mobileNumber}`,
+        code: otp,
+        role: formData.role,
+      });
+
+      console.log("Registration successful:", result);
+
+      await login(result.data.token);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleNavigateToLogin = () => {
     navigation.navigate("Login");
   };
+
+  const canSendOTP =
+    formData.fullName.trim().length > 0 &&
+    formData.mobileNumber.length === 10 &&
+    formData.role;
 
   return (
     <KeyboardAvoidingView
@@ -167,27 +201,65 @@ export default function RegisterScreen({ navigation }) {
               />
             </View>
 
+            {/* Role */}
+            {!otpSent && (
+              <View className="mt-4">
+                <Text className="mb-2 font-sansSemiBold text-body-sm text-text">
+                  I want to...
+                </Text>
+
+                <View className="flex-row gap-3">
+                  <Pressable
+                    onPress={() => updateField("role", "BUYER")}
+                    className={`flex-1 rounded-xl border p-4 ${
+                      formData.role === "BUYER"
+                        ? "border-primary bg-primary"
+                        : "border-border bg-background"
+                    }`}
+                  >
+                    <Text
+                      className={`text-center font-sansSemiBold text-body-sm ${
+                        formData.role === "BUYER" ? "text-surface" : "text-text"
+                      }`}
+                    >
+                      Buy Products
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={() => updateField("role", "ARTISAN")}
+                    className={`flex-1 rounded-xl border p-4 ${
+                      formData.role === "ARTISAN"
+                        ? "border-primary bg-primary"
+                        : "border-border bg-background"
+                    }`}
+                  >
+                    <Text
+                      className={`text-center font-sansSemiBold text-body-sm ${
+                        formData.role === "ARTISAN"
+                          ? "text-surface"
+                          : "text-text"
+                      }`}
+                    >
+                      Sell Products
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+
             {/* Send OTP */}
             {!otpSent ? (
               <Pressable
                 onPress={handleSendOTP}
-                disabled={
-                  formData.fullName.trim().length === 0 ||
-                  formData.mobileNumber.length !== 10
-                }
+                disabled={!canSendOTP}
                 className={`mt-4 items-center justify-center rounded-xl py-4 ${
-                  formData.fullName.trim().length > 0 &&
-                  formData.mobileNumber.length === 10
-                    ? "bg-primary active:bg-primary-dark"
-                    : "bg-border"
+                  canSendOTP ? "bg-primary active:bg-primary-dark" : "bg-border"
                 }`}
               >
                 <Text
                   className={`font-sansBold text-body ${
-                    formData.fullName.trim().length > 0 &&
-                    formData.mobileNumber.length === 10
-                      ? "text-surface"
-                      : "text-muted"
+                    canSendOTP ? "text-surface" : "text-muted"
                   }`}
                 >
                   Send OTP

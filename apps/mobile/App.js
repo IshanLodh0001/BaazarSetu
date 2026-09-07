@@ -19,6 +19,7 @@ import { JetBrainsMono_600SemiBold } from "@expo-google-fonts/jetbrains-mono/600
 import { JetBrainsMono_700Bold } from "@expo-google-fonts/jetbrains-mono/700Bold";
 
 import RootNavigator from "./src/navigation/RootNavigator";
+import { AuthProvider } from "./src/context/AuthContext";
 
 export default function App() {
   const [interLoaded] = useFonts({
@@ -47,7 +48,9 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <RootNavigator />
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
     </NavigationContainer>
   );
 }
