@@ -1,8 +1,16 @@
 import Redis from 'ioredis';
 
+console.log(
+  "REDIS_URL configured:",
+  Boolean(process.env.REDIS_URL),
+  "host:",
+  process.env.REDIS_URL
+    ? new URL(process.env.REDIS_URL).hostname
+    : "MISSING",
+);
+
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
-// Export a singleton instance
 export const redisClient = new Redis(redisUrl, {
   maxRetriesPerRequest: null,
 });
