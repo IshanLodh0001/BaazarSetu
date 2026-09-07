@@ -41,7 +41,7 @@ const CartScreen = ({ navigation }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent title={"Cart"} />
+      <HeadComponent title={"Cart"} navigation={navigation} />
       <ScrollView className="mt-6 px-4" contentContainerStyle={{ gap: 12 }}>
         {cart.map((item) => (
           <Pressable

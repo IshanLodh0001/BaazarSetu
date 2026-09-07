@@ -14,7 +14,7 @@ const Navbar = ({ navigation }) => {
           <Search size={24} />
         </Text>
       </Pressable>
-      <Pressable onPress={() => navigation.navigate("Dashboard")}>
+      <Pressable onPress={() => navigation.navigate("BuyerDashboard")}>
         <Text className="">
           <PackageIcon size={24} />
         </Text>

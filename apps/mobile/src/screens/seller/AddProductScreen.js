@@ -127,7 +127,7 @@ const AddProductScreen = ({navigation}) => {
 
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent title="Add Product" />
+      <HeadComponent title={"Add Product"} navigation={navigation} />
 
       <ScrollView
         className="px-6"
