@@ -28,6 +28,7 @@ import rateLimit from 'express-rate-limit';
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1);
 const prisma = new PrismaClient();
 const redisUrl = process.env.REDIS_URL;
 
