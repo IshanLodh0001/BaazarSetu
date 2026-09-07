@@ -1,0 +1,3 @@
+"""
+BaazarSetu app package init.
+"""

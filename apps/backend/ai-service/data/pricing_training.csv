@@ -1,0 +1,6 @@
+category,subCategory,craftType,material,state,quantity,rawMaterialCost,labourCost,packagingCost,transportCost,otherCost,totalCost,marketAveragePrice
+Handicrafts,Wall Art,Handmade Art,Wood,Rajasthan,1,500,300,50,100,50,1000,1500
+Textiles,Saree,Weaving,Silk,Gujarat,1,2000,1000,200,300,100,3600,4500
+Pottery,Vase,Clay Molding,Terracotta,Uttar Pradesh,2,100,200,50,100,50,500,800
+Jewelry,Necklace,Metalwork,Silver,Karnataka,1,1000,500,100,50,50,1700,2500
+Leather,Bag,Stitching,Leather,Tamil Nadu,1,800,400,50,100,50,1400,2000
