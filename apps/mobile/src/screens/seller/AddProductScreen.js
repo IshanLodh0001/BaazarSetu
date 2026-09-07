@@ -1,4 +1,11 @@
 import { useState } from "react";
+import { Alert } from "react-native";
+import { useAuth } from "../../context/AuthContext";
+import {
+  createProduct,
+  uploadProductImages,
+  publishProduct,
+} from "../../services/api";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -12,7 +19,9 @@ import AIAssistance from "../../components/AIAssistance";
 import Navbar from "../../components/Navbar";
 import AddProduct from "../../components/AddProduct";
 
-const AddProductScreen = ({navigation}) => {
+const AddProductScreen = ({ navigation }) => {
+  const { token } = useAuth();
+  console.log("SELLER TOKEN:", token);
   const [form, setForm] = useState({
     image: null,
     name: "",
@@ -48,8 +57,73 @@ const AddProductScreen = ({navigation}) => {
     }));
   };
 
-  const handleAddProduct = () => {
-    console.log("Product:", form);
+  const handleAddProduct = async () => {
+    console.log("ADD PRODUCT BUTTON PRESSED");
+
+    try {
+      if (!form.name.trim()) {
+        Alert.alert("Missing information", "Please enter a product name.");
+        return;
+      }
+
+      if (!form.price.trim()) {
+        Alert.alert("Missing information", "Please enter a price.");
+        return;
+      }
+
+      if (!form.stock.trim()) {
+        Alert.alert("Missing information", "Please enter the stock quantity.");
+        return;
+      }
+
+      const productPayload = {
+        productName: form.name.trim(),
+        category: form.category.trim() || undefined,
+        description: form.description.trim() || undefined,
+        price: Number(form.price),
+        stock: Number(form.stock),
+      };
+
+      console.log("Creating product:", productPayload);
+
+      const productResult = await createProduct(productPayload, token);
+
+      const productId = productResult.data.id;
+
+      console.log("Product created:", productId);
+
+      if (form.image) {
+        console.log("Uploading product image...");
+
+        await uploadProductImages(productId, form.image, token);
+
+        console.log("Product image uploaded.");
+      }
+
+      console.log("Publishing product...");
+
+      await publishProduct(productId, token);
+
+      console.log("Product published.");
+
+      Alert.alert(
+        "Product added",
+        "Your product has been added successfully.",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("SellerDashboard"),
+          },
+        ],
+      );
+    } catch (error) {
+      console.error("Failed to add product:", error);
+
+      Alert.alert(
+        "Could not add product",
+        error.message || "Something went wrong.",
+      );
+    }
   };
 
   const handleAddImage = async () => {
