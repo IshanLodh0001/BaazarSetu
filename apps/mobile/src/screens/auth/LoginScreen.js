@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,7 +10,10 @@ import {
   View,
 } from "react-native";
 
+import { sendOTP, verifyOTP } from "../../services/api";
+
 export default function LoginScreen({ navigation }) {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     mobileNumber: "",
     otp: "",
@@ -27,32 +31,56 @@ export default function LoginScreen({ navigation }) {
     setError("");
   };
 
-  const handleSendOTP = () => {
-    const mobileNumber = formData.mobileNumber;
+const handleSendOTP = async () => {
+  const mobileNumber = formData.mobileNumber;
 
-    if (!/^\d{10}$/.test(mobileNumber)) {
-      setError("Please enter a valid 10-digit mobile number.");
-      return;
-    }
+  if (!/^\d{10}$/.test(mobileNumber)) {
+    setError("Please enter a valid 10-digit mobile number.");
+    return;
+  }
 
-    console.log("Sending OTP to:", mobileNumber);
+  try {
+    setError("");
 
-    // TODO: connect to send OTP API
+    const result = await sendOTP(`+91${mobileNumber}`);
+
+    console.log("OTP response:", result);
+
     setOtpSent(true);
-  };
+  } catch (error) {
+    setError(error.message);
+  }
+};
 
-  const handleLogin = () => {
-    if (!/^\d{6}$/.test(formData.otp)) {
-      setError("Please enter a valid 6-digit OTP.");
-      return;
-    }
+const handleLogin = async () => {
+  const mobileNumber = formData.mobileNumber;
+  const otp = formData.otp;
 
-    console.log("Verifying OTP");
-    console.log("Mobile Number:", formData.mobileNumber);
-    console.log("OTP:", formData.otp);
+  if (!/^\d{10}$/.test(mobileNumber)) {
+    setError("Please enter a valid 10-digit mobile number.");
+    return;
+  }
 
-    // TODO: connect to OTP verification API
-  };
+  if (!/^\d{6}$/.test(otp)) {
+    setError("Please enter a valid 6-digit OTP.");
+    return;
+  }
+
+  try {
+    setError("");
+
+    const result = await verifyOTP({
+      phone: `+91${mobileNumber}`,
+      code: otp,
+    });
+
+    console.log("Login successful:", result);
+
+    await login(result.data.token);
+  } catch (error) {
+    setError(error.message);
+  }
+};
 
   const handleNavigateToRegister = () => {
     navigation.navigate("Register");
@@ -162,10 +190,7 @@ export default function LoginScreen({ navigation }) {
                   <TextInput
                     value={formData.otp}
                     onChangeText={(value) =>
-                      updateField(
-                        "otp",
-                        value.replace(/\D/g, "").slice(0, 6),
-                      )
+                      updateField("otp", value.replace(/\D/g, "").slice(0, 6))
                     }
                     placeholder="Enter 6-digit OTP"
                     placeholderTextColor="#74766D"
@@ -195,9 +220,7 @@ export default function LoginScreen({ navigation }) {
                 >
                   <Text
                     className={`font-sansBold text-body ${
-                      formData.otp.length === 6
-                        ? "text-surface"
-                        : "text-muted"
+                      formData.otp.length === 6 ? "text-surface" : "text-muted"
                     }`}
                   >
                     Verify & Login
