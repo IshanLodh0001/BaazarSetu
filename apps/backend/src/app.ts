@@ -29,8 +29,14 @@ dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
-const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379", {
-  lazyConnect: true, // Don't crash immediately on startup if not available
+const redisUrl = process.env.REDIS_URL;
+
+if (!redisUrl) {
+  throw new Error("REDIS_URL is not configured");
+}
+
+const redis = new Redis(redisUrl, {
+  lazyConnect: true,
 });
 
 // Production Security Headers
