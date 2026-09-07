@@ -66,7 +66,7 @@ const SearchScreen = ({ navigation }) => {
 
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent title={"Search"} />
+      <HeadComponent title={"Search"} navigation={navigation} />
       <ScrollView className="px-[24]">
         <Search
           setSearch={setSearch}

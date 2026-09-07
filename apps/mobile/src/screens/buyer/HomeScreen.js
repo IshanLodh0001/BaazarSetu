@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation }) => {
   ];
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent title={"BazaarSetu"} />
+      <HeadComponent title={"BazaarSetu"} navigation={navigation} />
       <ScrollView
         className="flex-1 bg-background"
         contentContainerStyle={{

@@ -6,9 +6,14 @@ import ProductDetailsScreen from "../screens/buyer/ProductDetailsScreen";
 import CartScreen from "../screens/buyer/CartScreen";
 import BuyerDashboardScreen from "../screens/buyer/BuyerDashboardScreen";
 
+import SellerDashboardScreen from "../screens/seller/SellerDashboardScreen";
+import AddProductScreen from "../screens/seller/AddProductScreen";
+
+import ProfileScreen from "../screens/shared/ProfileScreen";
+
 const Stack = createNativeStackNavigator();
 
-const BuyerNavigator = () => {
+export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
@@ -18,9 +23,15 @@ const BuyerNavigator = () => {
         component={ProductDetailsScreen}
       />
       <Stack.Screen name="Cart" component={CartScreen} />
-      <Stack.Screen name="Dashboard" component={BuyerDashboardScreen} />
+      <Stack.Screen name="BuyerDashboard" component={BuyerDashboardScreen} />
+
+      <Stack.Screen
+        name="SellerDashboard"
+        component={SellerDashboardScreen}
+      />
+      <Stack.Screen name="AddProduct" component={AddProductScreen} />
+
+      <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
-};
-
-export default BuyerNavigator;
+}

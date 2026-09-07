@@ -37,7 +37,7 @@ const ProductDetailsScreen = ({ navigation }) => {
   };
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent title={"Product"} />
+      <HeadComponent title={"Product"} navigation={navigation} />
 
       <ScrollView
         className="flex-1"
