@@ -54,13 +54,11 @@ export const getMe = async (token = null) => {
 
 export const getSellerAnalytics = async (token = null) => {
   const authToken = token || (await AsyncStorage.getItem("auth_token"));
-
   return apiRequest("/artisan/analytics/overview", {}, authToken);
 };
 
 export const getSellerOrders = async (token = null) => {
   const authToken = token || (await AsyncStorage.getItem("auth_token"));
-
   return apiRequest("/artisan/orders", {}, authToken);
 };
 
@@ -82,11 +80,7 @@ export const uploadProductImages = async (
   imageUri,
   token = null,
 ) => {
-  const authToken =
-    token || (await AsyncStorage.getItem("auth_token"));
-
-  const filename =
-    imageUri.split("/").pop() || `product-${Date.now()}.jpg`;
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
 
   const file = new File(imageUri);
 
@@ -110,6 +104,50 @@ export const publishProduct = async (productId, token = null) => {
     `/products/${productId}/publish`,
     {
       method: "POST",
+    },
+    authToken,
+  );
+};
+
+export const generateCatalogFromVoice = async (
+  audioUri,
+  language = "en",
+  targetLanguage = "en",
+  productId = null,
+  token = null,
+) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  const audioFile = new File(audioUri);
+
+  const formData = new FormData();
+
+  formData.append("audio", audioFile);
+  formData.append("language", language);
+  formData.append("targetLanguage", targetLanguage);
+
+  if (productId) {
+    formData.append("productId", productId);
+  }
+
+  return apiRequest(
+    "/catalog/generate",
+    {
+      method: "POST",
+      body: formData,
+    },
+    authToken,
+  );
+};
+
+export const updateProduct = async (productId, product, token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  return apiRequest(
+    `/products/${productId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(product),
     },
     authToken,
   );

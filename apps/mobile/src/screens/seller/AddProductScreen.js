@@ -1,12 +1,6 @@
 import { useState } from "react";
-import { Alert } from "react-native";
+import { View, Text, ScrollView, Pressable, Alert } from "react-native";
 import { useAuth } from "../../context/AuthContext";
-import {
-  createProduct,
-  uploadProductImages,
-  publishProduct,
-} from "../../services/api";
-import { View, Text, ScrollView, Pressable } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
   useAudioRecorder,
@@ -19,9 +13,16 @@ import AIAssistance from "../../components/AIAssistance";
 import Navbar from "../../components/Navbar";
 import AddProduct from "../../components/AddProduct";
 
+import {
+  createProduct,
+  uploadProductImages,
+  publishProduct,
+  generateCatalogFromVoice,
+  updateProduct,
+} from "../../services/api";
+
 const AddProductScreen = ({ navigation }) => {
   const { token } = useAuth();
-  console.log("SELLER TOKEN:", token);
   const [form, setForm] = useState({
     image: null,
     name: "",
@@ -39,15 +40,104 @@ const AddProductScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("details");
   const [aiResult, setAiResult] = useState(null);
 
-  const handleGetAssistance = () => {
-    setAiResult({
-      name: "Handcrafted Terracotta Vase",
-      description:
-        "A handcrafted terracotta vase made by traditional artisans.",
-      category: "Home Decor",
-      price: "850",
-      tags: ["Terracotta", "Handcrafted", "Home Decor"],
-    });
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [draftProductId, setDraftProductId] = useState(null);
+
+  const handleGetAssistance = async () => {
+    if (!form.image) {
+      Alert.alert(
+        "Add a photo",
+        "Please add a product photo before generating suggestions.",
+      );
+      return;
+    }
+
+    if (!voice) {
+      Alert.alert(
+        "Record your description",
+        "Please record a voice description before generating suggestions.",
+      );
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+
+      console.log("Creating draft product...");
+
+      const draftPayload = {
+        productName: "Draft Product",
+        description: "",
+        price: 0,
+        stock: 0,
+      };
+
+      console.log("1. createProduct:", typeof createProduct);
+      console.log("2. uploadProductImages:", typeof uploadProductImages);
+      console.log(
+        "3. generateCatalogFromVoice:",
+        typeof generateCatalogFromVoice,
+      );
+
+      const productResult = await createProduct(draftPayload, token);
+      const productId = productResult.data.id;
+
+      setDraftProductId(productId);
+
+      console.log("Draft product created:", productId);
+
+      console.log("Uploading product image...");
+
+      const imageResult = await uploadProductImages(
+        productId,
+        form.image,
+        token,
+      );
+
+      console.log("Product image uploaded.");
+
+      const uploadedImage = imageResult.data?.[0];
+
+      console.log("Generating AI catalog...");
+
+      const result = await generateCatalogFromVoice(
+        voice,
+        "en",
+        "en",
+        productId,
+        token,
+      );
+
+      console.log("AI catalog generated:", result);
+
+      const catalog = result.data.catalog;
+
+      setAiResult({
+        name: catalog.title,
+        description: catalog.description,
+        category: catalog.category,
+        price: "",
+        tags: catalog.tags || [],
+        material: catalog.material,
+        colour: catalog.colour,
+        craftType: catalog.craftType,
+        subCategory: catalog.subCategory,
+        seoKeywords: catalog.seoKeywords || [],
+        productId,
+        imageId: uploadedImage?.id,
+      });
+
+      setActiveTab("AI");
+    } catch (error) {
+      console.error("AI catalog generation failed:", error);
+
+      Alert.alert(
+        "AI generation failed",
+        error.message || "Something went wrong while generating the catalog.",
+      );
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const updateField = (field, value) => {
@@ -58,8 +148,6 @@ const AddProductScreen = ({ navigation }) => {
   };
 
   const handleAddProduct = async () => {
-    console.log("ADD PRODUCT BUTTON PRESSED");
-
     try {
       if (!form.name.trim()) {
         Alert.alert("Missing information", "Please enter a product name.");
@@ -76,35 +164,38 @@ const AddProductScreen = ({ navigation }) => {
         return;
       }
 
-      const productPayload = {
-        productName: form.name.trim(),
-        category: form.category.trim() || undefined,
-        description: form.description.trim() || undefined,
-        price: Number(form.price),
-        stock: Number(form.stock),
-      };
+      let productId = draftProductId;
 
-      console.log("Creating product:", productPayload);
+      if (!productId) {
+        const productPayload = {
+          productName: form.name.trim(),
+          category: form.category.trim() || undefined,
+          description: form.description.trim() || undefined,
+          price: Number(form.price),
+          stock: Number(form.stock),
+        };
 
-      const productResult = await createProduct(productPayload, token);
+        const productResult = await createProduct(productPayload, token);
 
-      const productId = productResult.data.id;
+        productId = productResult.data.id;
 
-      console.log("Product created:", productId);
-
-      if (form.image) {
-        console.log("Uploading product image...");
-
-        await uploadProductImages(productId, form.image, token);
-
-        console.log("Product image uploaded.");
+        if (form.image) {
+          await uploadProductImages(productId, form.image, token);
+        }
       }
 
-      console.log("Publishing product...");
+      await updateProduct(
+        productId,
+        {
+          productName: form.name.trim(),
+          category: form.category.trim() || undefined,
+          description: form.description.trim() || undefined,
+          price: Number(form.price),
+        },
+        token,
+      );
 
       await publishProduct(productId, token);
-
-      console.log("Product published.");
 
       Alert.alert(
         "Product added",
@@ -193,12 +284,10 @@ const AddProductScreen = ({ navigation }) => {
       name: aiResult.name,
       description: aiResult.description,
       category: aiResult.category,
-      price: aiResult.price,
     }));
 
     setActiveTab("details");
   };
-
   return (
     <View className="flex-1 bg-background">
       <HeadComponent title={"Add Product"} navigation={navigation} />
