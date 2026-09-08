@@ -1,12 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { File } from "expo-file-system";
 
 const API_BASE_URL = "https://baazarsetu.onrender.com/api/v1";
 
 const apiRequest = async (endpoint, options = {}, token = null) => {
   const headers = {
-    "Content-Type": "application/json",
     ...options.headers,
   };
+
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -43,8 +47,141 @@ export const verifyOTP = ({ phone, code, role }) =>
   });
 
 export const getMe = async (token = null) => {
-  const authToken =
-    token || (await AsyncStorage.getItem("auth_token"));
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
 
   return apiRequest("/users/me", {}, authToken);
+};
+
+export const getSellerAnalytics = async (token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+  return apiRequest("/artisan/analytics/overview", {}, authToken);
+};
+
+export const getSellerOrders = async (token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+  return apiRequest("/artisan/orders", {}, authToken);
+};
+
+export const createProduct = async (product, token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  return apiRequest(
+    "/products",
+    {
+      method: "POST",
+      body: JSON.stringify(product),
+    },
+    authToken,
+  );
+};
+
+export const uploadProductImages = async (
+  productId,
+  imageUri,
+  token = null,
+) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  const file = new File(imageUri);
+
+  const formData = new FormData();
+  formData.append("images", file);
+
+  return apiRequest(
+    `/products/${productId}/images`,
+    {
+      method: "POST",
+      body: formData,
+    },
+    authToken,
+  );
+};
+
+export const publishProduct = async (productId, token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  return apiRequest(
+    `/products/${productId}/publish`,
+    {
+      method: "POST",
+    },
+    authToken,
+  );
+};
+
+export const generateCatalogFromVoice = async (
+  audioUri,
+  language = "en",
+  targetLanguage = "en",
+  productId = null,
+  token = null,
+) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  const audioFile = new File(audioUri);
+
+  const formData = new FormData();
+
+  formData.append("audio", audioFile);
+  formData.append("language", language);
+  formData.append("targetLanguage", targetLanguage);
+
+  if (productId) {
+    formData.append("productId", productId);
+  }
+
+  return apiRequest(
+    "/catalog/generate",
+    {
+      method: "POST",
+      body: formData,
+    },
+    authToken,
+  );
+};
+
+export const updateProduct = async (productId, product, token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  return apiRequest(
+    `/products/${productId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(product),
+    },
+    authToken,
+  );
+};
+
+export const getMarketplaceProducts = async (
+  params = {},
+  token = null,
+) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.append(key, String(value));
+    }
+  });
+
+  const queryString = query.toString();
+
+  return apiRequest(
+    `/marketplace/products${queryString ? `?${queryString}` : ""}`,
+    {},
+    authToken,
+  );
+};
+
+export const getProductDetails = async (productId, token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  return apiRequest(
+    `/marketplace/products/${productId}`,
+    {},
+    authToken,
+  );
 };
