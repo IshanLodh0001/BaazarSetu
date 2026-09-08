@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../context/AuthContext";
 import { SafeAreaView, ScrollView, View, Text, Pressable } from "react-native";
 import { User, Pencil, MapPin, LogOut, Store } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -6,7 +7,7 @@ import HeadComponent from "../../components/HeadComponent";
 import Navbar from "../../components/Navbar";
 
 export default function ProfileScreen({ user, navigation }) {
-//   const navigation = useNavigation();
+  const { logout } = useAuth();
   const currentUser = user ?? {
     name: "User",
     mobileNumber: "9876543210",
@@ -24,10 +25,12 @@ export default function ProfileScreen({ user, navigation }) {
     navigation.navigate("SellerDashboard");
   };
 
-  const handleLogout = () => {
-    console.log("Logout pressed");
-
-    // TODO: clear authentication state
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
