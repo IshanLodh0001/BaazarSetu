@@ -152,3 +152,36 @@ export const updateProduct = async (productId, product, token = null) => {
     authToken,
   );
 };
+
+export const getMarketplaceProducts = async (
+  params = {},
+  token = null,
+) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      query.append(key, String(value));
+    }
+  });
+
+  const queryString = query.toString();
+
+  return apiRequest(
+    `/marketplace/products${queryString ? `?${queryString}` : ""}`,
+    {},
+    authToken,
+  );
+};
+
+export const getProductDetails = async (productId, token = null) => {
+  const authToken = token || (await AsyncStorage.getItem("auth_token"));
+
+  return apiRequest(
+    `/marketplace/products/${productId}`,
+    {},
+    authToken,
+  );
+};

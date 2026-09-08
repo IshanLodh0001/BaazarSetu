@@ -1,44 +1,26 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+import { useEffect, useState } from "react";
+
 import HeadComponent from "../../components/HeadComponent";
 import Navbar from "../../components/Navbar";
 import Search from "../../components/Search";
-import { useState } from "react";
 import CategoryPill from "../../components/CategoryPill";
 import ProductCard from "../../components/ProductCard";
+
+import { getMarketplaceProducts } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
+
 const SearchScreen = ({ navigation }) => {
-  const products = [
-    {
-      id: "1",
-      name: "Jaipur Blue Pottery",
-      location: "Jaipur, Rajasthan",
-      price: "2400",
-      image: require("../../../assets/bluepottery.jpg"),
-    },
-    {
-      id: "2",
-      name: "Banarasi Silk",
-      location: "Varanasi, Uttar Pradesh",
-      price: "8500",
-      image: require("../../../assets/banarasi.jpg"),
-    },
-    {
-      id: "3",
-      name: "Kutch Embroidery",
-      location: "Kutch, Gujarat",
-      price: "3200",
-      image: require("../../../assets/kutch.jpg"),
-    },
-    {
-      id: "4",
-      name: "Dhokra Craft",
-      location: "Bastar, Chhattisgarh",
-      price: "4100",
-      image: require("../../../assets/dhokra.jpg"),
-    },
-  ];
+  const { token } = useAuth();
 
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [active, setActive] = useState("All");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const categories = [
     "All",
     "Pottery",
@@ -49,25 +31,92 @@ const SearchScreen = ({ navigation }) => {
     "Jewellery",
   ];
 
-  const [active, setActive] = useState("All");
-  const handleSetActive = (elem) => {
-    setActive(elem);
+  const normalizeProduct = (product) => {
+    const imagePath =
+      product.images?.find((img) => img.isPrimary)?.processedPath ||
+      product.images?.find((img) => img.isPrimary)?.originalPath ||
+      product.images?.[0]?.processedPath ||
+      product.images?.[0]?.originalPath ||
+      null;
+
+    return {
+      ...product,
+      id: product.productId,
+      name: product.productName,
+      location: [product.artisan?.district, product.artisan?.state]
+        .filter(Boolean)
+        .join(", "),
+      price: String(product.price ?? 0),
+      image: imagePath
+        ? {
+            uri: `https://baazarsetu.onrender.com/${imagePath.replace(
+              /^\/+/,
+              "",
+            )}`,
+          }
+        : null,
+    };
   };
+
+  const loadProducts = async (params = {}) => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await getMarketplaceProducts(
+        {
+          page: 1,
+          limit: 20,
+          ...params,
+        },
+        token,
+      );
+
+      const normalizedProducts = response.data.products.map(normalizeProduct);
+
+      setProducts(normalizedProducts);
+      setResults(normalizedProducts);
+    } catch (err) {
+      console.error("Failed to load marketplace products:", err);
+      setError(err.message || "Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = () => {
-    const query = search.trim().toLowerCase();
+    const query = search.trim();
 
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(query),
-    );
-
-    setResults(filtered);
+    loadProducts({
+      search: query || undefined,
+      category: active !== "All" ? active : undefined,
+    });
   };
+
+  const handleSetActive = (elem) => {
+    setActive(elem);
+
+    loadProducts({
+      search: search.trim() || undefined,
+      category: elem !== "All" ? elem : undefined,
+    });
+  };
+
+  const displayProducts = search.trim() === "" ? products : results;
 
   return (
     <View className="flex-1 bg-background">
-      <HeadComponent title={"Search"} navigation={navigation} />
-      <ScrollView className="px-[24]">
+      <HeadComponent title="Search" navigation={navigation} />
+
+      <ScrollView
+        className="px-[24]"
+        showsVerticalScrollIndicator={false}
+      >
         <Search
           setSearch={setSearch}
           search={search}
@@ -75,32 +124,55 @@ const SearchScreen = ({ navigation }) => {
         />
 
         {/* Categories */}
-        <View className="h-fit w-full mt-9">
-          <Text className="text-body text-text font-sans">Categories</Text>
-          <View className="flex-1 flex-row flex-wrap items-center mt-3 gap-3">
-            {categories.map((elem) => {
-              return (
-                <CategoryPill
-                  elem={elem}
-                  key={elem}
-                  handleSetActive={handleSetActive}
-                  active={active}
-                />
-              );
-            })}
+        <View className="mt-9 w-full">
+          <Text className="font-sans text-body text-text">
+            Categories
+          </Text>
+
+          <View className="mt-3 w-full flex-row flex-wrap gap-3">
+            {categories.map((elem) => (
+              <CategoryPill
+                elem={elem}
+                key={elem}
+                handleSetActive={handleSetActive}
+                active={active}
+              />
+            ))}
           </View>
         </View>
 
         {/* Explore */}
-
-        <View className="h-fit w-full mt-6">
-          <Text className="text-body font-sansSemiBold text-primary mb-4">
+        <View className="mt-6 w-full">
+          <Text className="mb-4 font-sansSemiBold text-body text-primary">
             Explore
           </Text>
-          {search.trim() === "" ? (
-            <View className="flex-row flex-wrap gap-4">
-              {products.map((product) => {
-                return (
+
+          {error ? (
+            <View className="rounded-xl border border-error bg-surface p-4">
+              <Text className="font-sans text-body-sm text-error">
+                {error}
+              </Text>
+            </View>
+          ) : loading ? (
+            <Text className="font-sans text-body-sm text-muted">
+              Loading products...
+            </Text>
+          ) : (
+            <>
+              {search.trim() !== "" && (
+                <View className="mb-4 flex-row items-center justify-between">
+                  <Text className="font-sans text-body-sm text-muted">
+                    Results for "{search}"
+                  </Text>
+
+                  <Text className="font-mono text-data text-muted">
+                    {results.length} items
+                  </Text>
+                </View>
+              )}
+
+              <View className="flex-row flex-wrap gap-4">
+                {displayProducts.map((product) => (
                   <ProductCard
                     product={product}
                     key={product.id}
@@ -110,39 +182,19 @@ const SearchScreen = ({ navigation }) => {
                       })
                     }
                   />
-                );
-              })}
-            </View>
-          ) : (
-            <View className="h-fit w-full flex gap-4">
-              <View className="mb-4 flex-row items-center justify-between">
-                <Text className="font-sans text-body-sm text-muted">
-                  Results for "{search}"
-                </Text>
+                ))}
+              </View>
 
-                <Text className="font-mono text-data text-muted">
-                  {results.length} items
+              {!displayProducts.length && (
+                <Text className="font-sans text-body-sm text-muted">
+                  No products found.
                 </Text>
-              </View>
-              <View className="flex-row flex-wrap gap-4">
-                {results.map((product) => {
-                  return (
-                    <ProductCard
-                      product={product}
-                      key={product.id}
-                      onPress={() =>
-                        navigation.navigate("ProductDetails", {
-                          product,
-                        })
-                      }
-                    />
-                  );
-                })}
-              </View>
-            </View>
+              )}
+            </>
           )}
         </View>
       </ScrollView>
+
       <Navbar navigation={navigation} />
     </View>
   );
